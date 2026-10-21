@@ -31,7 +31,7 @@ public class ShelterAnalyticsService {
             }
             animalsBySpecies.get(species).add(animal);
 
-            if(animal.getAge()==null){
+            if (animal.getAgeOptional().isEmpty()){
                 animalsNeedingVetInput.add(animal.getName()+ "("+species+")");
             }
         }
@@ -43,7 +43,7 @@ public class ShelterAnalyticsService {
 
         }
 
-        // TODO Step 3:
+        // Step 3:
            Map<String,Long>totalPerSpecies=allAnimals.stream()
                    .collect(Collectors.groupingBy(Animal::getSpecies,Collectors.counting()));
 
@@ -59,7 +59,7 @@ public class ShelterAnalyticsService {
         Map<String,Animal>oldestPerSpecies=new TreeMap<>();
         for (String species : uniqueSpecies) {
             animalsBySpecies.get(species).stream()
-                    .filter(animal -> animal.getAge() != null)
+                    .filter(animal -> animal.getAgeOptional().isPresent())
                     .max(Comparator.comparing(Animal::getAge))
                     .ifPresent(oldest -> oldestPerSpecies.put(species, oldest));
         }
