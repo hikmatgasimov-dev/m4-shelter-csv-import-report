@@ -26,7 +26,12 @@ public class ReportExportService {
             writer.newLine();
             writer.newLine();
 
-
+            writer.write("Total important +"+ reportData.importResult().allAnimals().size());
+            writer.newLine();
+            writer.write("Total skipped: "+ reportData.importResult().skippedRows());
+            writer.newLine();
+            writer.newLine();
+            
             writer.write("----Unique species----");
             writer.newLine();
             writer.write(String.join(",",reportData.uniqueSpecies()));
@@ -35,11 +40,7 @@ public class ReportExportService {
 
             log.info("Report written  to {}",outputPath);
 
-            writer.write("Total important +"+ reportData.importResult().allAnimals().size());
-            writer.newLine();
-            writer.write("Total skipped: "+ reportData.importResult().skippedRows());
-            writer.newLine();
-            writer.newLine();
+
         } catch (IOException e) {
             log.error("Could not write report to {}", outputPath, e);
         }
