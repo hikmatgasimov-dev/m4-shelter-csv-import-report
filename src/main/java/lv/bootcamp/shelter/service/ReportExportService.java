@@ -27,9 +27,15 @@ public class ReportExportService {
             writer.newLine();
 
             log.info("Report written  to {}",outputPath);
+
+            writer.write("Total important +"+ reportData.importResult().allAnimals().size());
+            writer.newLine();
+            writer.write("Total skipped: "+ reportData.importResult().skippedRows());
+            writer.newLine();
+            writer.newLine();
         } catch (IOException e) {
             log.error("Could not write report to {}", outputPath, e);
         }
-      
+
     }
 }
