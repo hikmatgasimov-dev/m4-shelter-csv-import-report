@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -40,15 +42,19 @@ public class ReportExportService {
 
             writer.write("--- Per-species breakdown ---");
             writer.newLine();
-            for (String species:reportData.uniqueSpecies()){
 
-                long total=reportData.totalPerSpecies().getOrDefault(species, 0L);
-                long vaccinated=reportData.vaccinatedPerSpecies().getOrDefault(species, 0L);
+            List<Map.Entry<String,Long>>sortedTotals=new ArrayList<>(reportData.totalPerSpecies().entrySet());
+             sortedTotals.sort(Map.Entry.comparingByKey());
+
+             for (Map.Entry<String, Long> entry : sortedTotals) {
+                String species = entry.getKey();
+                long total = entry.getValue();
+                long vaccinated = reportData.vaccinatedPerSpecies().getOrDefault(species, 0L);
                 writer.write(String.format("%-8s%d total, %d vaccinated", species + ":", total, vaccinated));
-
                 writer.newLine();
-
             }
+
+
             writer.newLine();
 
             writer.write("--- Oldest per species ---");
