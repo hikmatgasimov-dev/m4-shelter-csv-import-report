@@ -9,6 +9,7 @@ import lv.bootcamp.shelter.service.ShelterAnalyticsService;
 import lv.bootcamp.shelter.service.data.ShelterReportData;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import lv.bootcamp.shelter.service.JsonExportService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,6 +29,7 @@ public class ShelterCsvApplication {
         CsvImportService importService = new CsvImportService();
         ShelterAnalyticsService analyticsService = new ShelterAnalyticsService();
         ReportExportService reportExportService = new ReportExportService();
+        JsonExportService jsonExportService = new JsonExportService();
 
         // find all .csv files in the input folder (and its sub folders)
         List<Path> csvFiles;
@@ -55,11 +57,11 @@ public class ShelterCsvApplication {
             String baseName = inputFileName.substring(0, inputFileName.length() - ".csv".length());
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
             Path outputPath = Path.of("output", "upload-report-" + baseName + "-" + timestamp + ".txt");
-
+            Path jsonPath = Path.of("output", "upload-report-" + baseName + "-" + timestamp + ".json");
             ImportResult importResult = importService.importAnimals(csvFile);
             ShelterReportData reportData = analyticsService.buildReportData(importResult);
             reportExportService.writeReport(outputPath, reportData);
-
+            jsonExportService.writeJson(jsonPath, reportData);
             registry.markProcessed(inputFileName);
         }
     }
