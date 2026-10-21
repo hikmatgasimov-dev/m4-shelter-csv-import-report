@@ -1,73 +1,50 @@
-## How to run
+# Shelter CSV Import and Report Starter
 
-Requirements: Java 21 and Maven 3.8+.
+Starter project for M4 practical task: Collections, Files, and Streams.
 
-```bash
-mvn compile exec:java
-```
+## Task
+Build a small Java application that:
+1. Parses and validates shelter intake CSV rows.
+2. Stores valid data in suitable collections.
+3. Uses stream pipelines to compute report metrics.
+4. Exports output/upload-report.txt in the required format.
 
-You can also run `ShelterCsvApplication` from IntelliJ.
+## What is included
+- Compile-safe project skeleton with TODO markers for Steps 1-4.
+- Sample intake file with 30+ rows, including intentionally invalid rows.
+- Output folder scaffold and optional processed-files registry placeholder.
+- SLF4J logging dependencies.
 
-The app scans `src/main/resources/data` for every `.csv` file (including sub folders) and processes each one. For every file it writes two reports to the `output/` folder:
+## Project structure
+- src/main/java/lv/bootcamp/shelter/model/Animal.java
+- src/main/java/lv/bootcamp/shelter/service/CsvImportService.java
+- src/main/java/lv/bootcamp/shelter/service/ShelterAnalyticsService.java
+- src/main/java/lv/bootcamp/shelter/service/ReportExportService.java
+- src/main/resources/data/intake.csv
+- output/processed-files.txt
 
-- `upload-report-<csv name>-<yyyy-MM-dd_HH-mm-ss>.txt` - the text report
-- `upload-report-<csv name>-<yyyy-MM-dd_HH-mm-ss>.json` - a JSON summary (Gson)
+## Required behavior checklist
+- Skip malformed rows and log warnings with SLF4J.
+- Accept blank age as unknown.
+- Reject non-numeric age values.
+- Parse date format dd.MM.yyyy.
+- Build collections:
+  - List<Animal> allAnimals
+  - Set<String> uniqueSpecies
+  - Map<String, List<Animal>> animalsBySpecies
+  - List<String> animalsNeedingVetInput
+- Report includes:
+  - total imported and total skipped
+  - unique species list
+  - per-species totals and vaccinated counts
+  - oldest animal per species (excluding unknown ages)
+  - needs-vet-input line in format name(species)
 
-Invalid rows are skipped and logged with SLF4J warnings.
-
-## Processed files registry
-
-The names of imported files are saved in `output/processed-files.txt`. A file that is already listed there is skipped on the next run, so running the app twice does not create duplicate reports.
-
-To import a file again, delete `output/processed-files.txt` (or remove that file name from it) and run the app.
-
-The files in `output/` are generated, so they are listed in `.gitignore` and are not committed.
-
-## Sample report
-
-Result for `intake.csv`:
-
-```
-=== Shelter Intake Report ===
-Date generated: 21.10.2026
-
-Total imported: 31
-Total skipped:  6
-Invalid rows: 8, 9, 10, 34, 35, 36
-
---- Unique species ---
-Bird, Cat, Dog, Rabbit
-
---- Per-species breakdown ---
-Bird:   6 total, 2 vaccinated
-Cat:    8 total, 7 vaccinated
-Dog:    11 total, 10 vaccinated
-Rabbit: 6 total, 3 vaccinated
-
---- Oldest per species ---
-Bird:   Charlie (age 4)
-Cat:    Cleo (age 5)
-Dog:    Shadow (age 9)
-Rabbit: Gizmo (age 5)
-
---- Needs Vet input to determine age ---
-Milo(Dog), Leo(Cat), Pepper(Bird)
-```
-
-## What was implemented
-
-Required steps:
-
-1. Parse and validate CSV rows (`CsvImportService`)
-2. Store valid data in collections (`ShelterAnalyticsService`)
-3. Calculate summary values with stream pipelines (`ShelterAnalyticsService`, `ShelterReportData`)
-4. Export the report with `BufferedWriter` (`ReportExportService`)
-
-Stretch goals:
-
-- Report sections sorted alphabetically by species with a `Comparator` on the map entries
-- `Optional` for animals with a missing age (`Animal.getAgeOptional()`)
-- JSON summary export with Gson (`JsonExportService`)
-- All `.csv` files in a folder processed with `Files.walk()`
-- Timestamped report file names and a processed-files registry (`ProcessedFilesRegistry`)
-- Invalid row numbers listed in the report
+## Stretch goals
+- Sort report sections alphabetically by species.
+- Use Optional for missing ages.
+- Add JSON summary export.
+- Process multiple CSV files with Files.walk().
+- Write unique timestamped report filenames.
+- Persist processed input filenames and skip duplicates.
+- Include invalid row numbers in report.
