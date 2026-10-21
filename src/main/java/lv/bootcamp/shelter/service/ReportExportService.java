@@ -26,19 +26,19 @@ public class ReportExportService {
             writer.newLine();
             writer.newLine();
 
-            writer.write("Total important +"+ reportData.importResult().allAnimals().size());
+            writer.write("Total imported: " + reportData.importResult().allAnimals().size());
             writer.newLine();
-            writer.write("Total skipped: "+ reportData.importResult().skippedRows());
-            writer.newLine();
-            writer.newLine();
-
-            writer.write("----Unique species----");
-            writer.newLine();
-            writer.write(String.join(",",reportData.uniqueSpecies()));
+            writer.write("Total skipped:  " + reportData.importResult().skippedRows());
             writer.newLine();
             writer.newLine();
 
-            writer.write("----Per species----");
+            writer.write("--- Unique species ---");
+            writer.newLine();
+            writer.write(String.join(", ", reportData.uniqueSpecies()));
+            writer.newLine();
+            writer.newLine();
+
+            writer.write("--- Per-species breakdown ---");
             writer.newLine();
             for (String species:reportData.uniqueSpecies()){
 
@@ -51,10 +51,6 @@ public class ReportExportService {
             }
             writer.newLine();
 
-
-            writer.write("----Per species----");
-
-
             writer.write("--- Oldest per species ---");
             writer.newLine();
             for (String species : reportData.uniqueSpecies()) {
@@ -65,7 +61,11 @@ public class ReportExportService {
                 }
             }
             writer.newLine();
-            
+
+            writer.write("--- Needs Vet input to determine age ---");
+            writer.newLine();
+            writer.write(String.join(", ", reportData.animalsNeedingVetInput()));
+            writer.newLine();
             log.info("Report written  to {}",outputPath);
 
         } catch (IOException e) {
