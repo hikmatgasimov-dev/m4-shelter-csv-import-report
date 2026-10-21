@@ -31,15 +31,27 @@ public class ReportExportService {
             writer.write("Total skipped: "+ reportData.importResult().skippedRows());
             writer.newLine();
             writer.newLine();
-            
+
             writer.write("----Unique species----");
             writer.newLine();
             writer.write(String.join(",",reportData.uniqueSpecies()));
             writer.newLine();
             writer.newLine();
 
-            log.info("Report written  to {}",outputPath);
+            writer.write("----Per species----");
+            writer.newLine();
+            for (String species:reportData.uniqueSpecies()){
 
+                long total=reportData.totalPerSpecies().getOrDefault(species, 0L);
+                long vaccinated=reportData.vaccinatedPerSpecies().getOrDefault(species, 0L);
+                writer.write(String.format("%-8s%d total, %d vaccinated", species + ":", total, vaccinated));
+
+                writer.newLine();
+
+            }
+            writer.newLine();
+
+            log.info("Report written  to {}",outputPath);
 
         } catch (IOException e) {
             log.error("Could not write report to {}", outputPath, e);
