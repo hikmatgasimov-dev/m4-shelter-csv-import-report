@@ -59,13 +59,16 @@ public class ReportExportService {
 
             writer.write("--- Oldest per species ---");
             writer.newLine();
-            for (String species : reportData.uniqueSpecies()) {
-                Animal oldest = reportData.oldestPerSpecies().get(species);
-                if (oldest != null) {
-                    writer.write(String.format("%-8s%s (age %d)", species + ":", oldest.getName(), oldest.getAge()));
-                    writer.newLine();
-                }
+            List<Map.Entry<String,Animal>>sortedOldest=new ArrayList<>(reportData.oldestPerSpecies().entrySet());
+
+            for(Map.Entry<String,Animal>entry:sortedOldest){
+
+                Animal oldest=entry.getValue();
+                writer.write(String.format("%-8s%s (age %d)", entry.getKey() + ":", oldest.getName(), oldest.getAge()));
+                writer.newLine();
             }
+
+
             writer.newLine();
 
             writer.write("--- Needs Vet input to determine age ---");
