@@ -59,9 +59,10 @@ public class ReportExportService {
 
             writer.write("--- Oldest per species ---");
             writer.newLine();
-            List<Map.Entry<String,Animal>>sortedOldest=new ArrayList<>(reportData.oldestPerSpecies().entrySet());
+            List<Map.Entry<String, Animal>> sortedOldest = new ArrayList<>(reportData.oldestPerSpecies().entrySet());
+            sortedOldest.sort(Map.Entry.comparingByKey());
 
-            for(Map.Entry<String,Animal>entry:sortedOldest){
+            for (Map.Entry<String, Animal> entry : sortedOldest){
 
                 Animal oldest=entry.getValue();
                 writer.write(String.format("%-8s%s (age %d)", entry.getKey() + ":", oldest.getName(), oldest.getAge()));
