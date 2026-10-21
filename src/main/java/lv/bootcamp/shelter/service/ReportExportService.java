@@ -2,7 +2,7 @@ package lv.bootcamp.shelter.service;
 
 import lombok.extern.slf4j.Slf4j;
 import lv.bootcamp.shelter.service.data.ShelterReportData;
-
+import lv.bootcamp.shelter.model.Animal;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -51,6 +51,21 @@ public class ReportExportService {
             }
             writer.newLine();
 
+
+            writer.write("----Per species----");
+
+
+            writer.write("--- Oldest per species ---");
+            writer.newLine();
+            for (String species : reportData.uniqueSpecies()) {
+                Animal oldest = reportData.oldestPerSpecies().get(species);
+                if (oldest != null) {
+                    writer.write(String.format("%-8s%s (age %d)", species + ":", oldest.getName(), oldest.getAge()));
+                    writer.newLine();
+                }
+            }
+            writer.newLine();
+            
             log.info("Report written  to {}",outputPath);
 
         } catch (IOException e) {
