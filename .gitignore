@@ -3,4 +3,5 @@ target/
 *.iml
 output/upload-report.txt
 output/upload-report-*.txt
+output/upload-report-*.json
 output/processed-files.txt
