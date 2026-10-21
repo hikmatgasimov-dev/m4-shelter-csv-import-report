@@ -1,6 +1,8 @@
 package lv.bootcamp.shelter;
 
+import lombok.extern.slf4j.Slf4j;
 import lv.bootcamp.shelter.service.CsvImportService;
+import lv.bootcamp.shelter.service.ProcessedFilesRegistry;
 import lv.bootcamp.shelter.service.data.ImportResult;
 import lv.bootcamp.shelter.service.ReportExportService;
 import lv.bootcamp.shelter.service.ShelterAnalyticsService;
@@ -9,11 +11,21 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import java.nio.file.Path;
-
+@Slf4j
 public class ShelterCsvApplication {
 
     public static void main(String[] args) {
         Path inputPath = Path.of("src", "main", "resources", "data", "intake.csv");
+        Path registryPath = Path.of("output", "processed-files.txt");
+
+        ProcessedFilesRegistry registry = new ProcessedFilesRegistry(registryPath);
+        String inputFileName = inputPath.getFileName().toString();
+
+        if (registry.isProcessed(inputFileName)) {
+            log.info("File {} was already processed, skipping", inputFileName);
+            return;
+        }
+
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
         Path outputPath = Path.of("output", "upload-report-" + timestamp + ".txt");
 
@@ -24,5 +36,7 @@ public class ShelterCsvApplication {
         ImportResult importResult = importService.importAnimals(inputPath);
         ShelterReportData reportData = analyticsService.buildReportData(importResult);
         reportExportService.writeReport(outputPath, reportData);
+
+        registry.markProcessed(inputFileName);
     }
 }
