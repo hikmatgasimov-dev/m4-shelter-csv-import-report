@@ -3,6 +3,7 @@ package lv.bootcamp.shelter.model;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import java.util.Optional;
 
 import java.time.LocalDate;
 
@@ -16,5 +17,9 @@ public class Animal {
     private final Integer age;
     private final boolean vaccinated;
     private final LocalDate intakeDate;
+
+    public Optional<Integer> getAgeOptional() {
+        return Optional.ofNullable(age);
+    }
 
 }
