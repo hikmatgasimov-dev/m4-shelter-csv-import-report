@@ -1,20 +1,35 @@
 package lv.bootcamp.shelter.service;
 
+import lombok.extern.slf4j.Slf4j;
 import lv.bootcamp.shelter.service.data.ShelterReportData;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class ReportExportService {
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+@Slf4j
+public class ReportExportService {
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     public void writeReport(Path outputPath, ShelterReportData reportData) {
         // TODO Step 4:
-        // 1) Write upload-report.txt in required format.
-        // 2) Include generated date, imported/skipped totals.
-        // 3) Include unique species and per-species breakdown.
-        // 4) Include oldest animal per species.
-        // 5) Include animalsNeedingVetInput as name(species), name2(species2).
-        // 6) Use UTF-8 and try-with-resources.
 
-        throw new UnsupportedOperationException("TODO: implement report export");
+        try(BufferedWriter writer= Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8)){
+
+            writer.write("=== Shelter Intake Report ===");
+            writer.newLine();
+            writer.write("Date generated: " + LocalDate.now().format(DATE_FORMAT));
+            writer.newLine();
+            writer.newLine();
+
+            log.info("Report written  to {}",outputPath);
+        } catch (IOException e) {
+            log.error("Could not write report to {}", outputPath, e);
+        }
+      
     }
 }
