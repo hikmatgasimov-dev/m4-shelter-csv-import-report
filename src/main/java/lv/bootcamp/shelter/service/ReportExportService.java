@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -31,6 +32,10 @@ public class ReportExportService {
             writer.write("Total imported: " + reportData.importResult().allAnimals().size());
             writer.newLine();
             writer.write("Total skipped:  " + reportData.importResult().skippedRows());
+            writer.newLine();
+            writer.write("Invalid rows: " + reportData.importResult().invalidRowNumbers().stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(", ")));
             writer.newLine();
             writer.newLine();
 
