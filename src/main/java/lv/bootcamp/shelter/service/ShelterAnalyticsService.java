@@ -1,9 +1,11 @@
 package lv.bootcamp.shelter.service;
 import lombok.extern.slf4j.Slf4j;
-
+import java.util.stream.Collectors;
 import lv.bootcamp.shelter.model.Animal;
 import lv.bootcamp.shelter.service.data.ImportResult;
 import lv.bootcamp.shelter.service.data.ShelterReportData;
+
+
 
 import java.util.*;
 
@@ -42,11 +44,33 @@ public class ShelterAnalyticsService {
         }
 
         // TODO Step 3:
-        // Add necessary fields to ShelterReportData
-        // Use stream pipelines for:
-        // - vaccinated vs unvaccinated counts per species
-        // - oldest animal per species (excluding unknown ages)
+           Map<String,Long>totalPerSpecies=allAnimals.stream()
+                   .collect(Collectors.groupingBy(Animal::getSpecies,Collectors.counting()));
 
-        return new ShelterReportData(importResult);
+        Map<String,Long>vaccinatedPerSpecies=allAnimals.stream()
+                .filter(Animal::isVaccinated)
+                .collect(Collectors.groupingBy(Animal::getSpecies, Collectors.counting()));
+
+        Map<String,Long>unvaccinatedPerSpecies=allAnimals.stream()
+                .filter(animal -> !animal.isVaccinated())
+                .collect(Collectors.groupingBy(Animal::getSpecies, Collectors.counting()));
+        // oldest animal per species, animals with unknown age are excluded
+
+        Map<String,Animal>oldestPerSpecies=new TreeMap<>();
+        for (String species : uniqueSpecies) {
+            animalsBySpecies.get(species).stream()
+                    .filter(animal -> animal.getAge() != null)
+                    .max(Comparator.comparing(Animal::getAge))
+                    .ifPresent(oldest -> oldestPerSpecies.put(species, oldest));
+        }
+
+        log.info("total = {}: vacinated={}, unvacinated={}", totalPerSpecies,vaccinatedPerSpecies,unvaccinatedPerSpecies);
+
+        oldestPerSpecies.forEach((species, animal) ->
+                log.info("Oldest {}: {} (age {})", species, animal.getName(), animal.getAge()));
+
+        return new ShelterReportData(importResult, uniqueSpecies, animalsBySpecies, animalsNeedingVetInput,
+                totalPerSpecies, vaccinatedPerSpecies, unvaccinatedPerSpecies, oldestPerSpecies);
+
     }
 }
