@@ -26,6 +26,13 @@ public class ReportExportService {
             writer.newLine();
             writer.newLine();
 
+
+            writer.write("----Unique species----");
+            writer.newLine();
+            writer.write(String.join(",",reportData.uniqueSpecies()));
+            writer.newLine();
+            writer.newLine();
+
             log.info("Report written  to {}",outputPath);
 
             writer.write("Total important +"+ reportData.importResult().allAnimals().size());
